@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Totm_OrderInvoice>
+            <version>0.1.0</version>
+        </Totm_OrderInvoice>
+    </modules>
+    
+    <global>
+        
+        <models>
+            <totm_orderinvoice>
+                <class>Totm_OrderInvoice_Model</class>
+            </totm_orderinvoice>
+        </models>
+        
+        <resources>
+            <totm_orderinvoice_setup>
+                <setup>
+                    <module>Totm_OrderInvoice</module>
+                    <class>Mage_Core_Model_Resource_Setup</class>
+                </setup>
+            </totm_orderinvoice_setup>
+        </resources>
+        
+        <events>
+            <checkout_submit_all_after>
+                <observers>
+                    <totm_orderinvoice>
+                        <class>Totm_OrderInvoice_Model_Observer</class>
+                        <method>createInvoiceAfterOrderPlaced</method>
+                    </totm_orderinvoice>
+                </observers>
+            </checkout_submit_all_after>
+        </events>
+    </global>
+</config>

@@ -1,0 +1,31 @@
+<?php
+class Totm_OrderInvoice_Model_Observer
+{
+    
+    public function createInvoiceAfterOrderPlaced(Varien_Event_Observer $observer)
+    {
+        $order = $observer->getEvent()->getOrder();
+        
+        if ($order->canInvoice()) {
+            $invoice = Mage::getModel('sales/service_order', $order)->prepareInvoice();
+            
+            if ($invoice->getTotalQty()) {
+                //$invoice->setRequestedCaptureCase(Mage_Sales_Model_Order_Invoice::CAPTURE_OFFLINE);
+                $invoice->setState(Mage_Sales_Model_Order_Invoice::STATE_OPEN);
+                
+                $invoice->register();
+                $transactionSave = Mage::getModel('core/resource_transaction')
+                    ->addObject($invoice)
+                    ->addObject($invoice->getOrder());
+                $transactionSave->save();
+                
+                try {
+                    $invoice->sendEmail(false);
+                } catch (Exception $e) {
+                    Mage::logException($e);
+                }
+            }
+        }
+    }
+    
+}
